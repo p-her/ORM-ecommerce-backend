@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
           'price',
           'stock',
           'category_id'
-          [sequelize.literal('(SELECT *')]
+   
       ],
       include: [
           {
@@ -64,17 +64,20 @@ router.get('/:id', (req, res) => {
             attributes: ['id',
                          'category_name'
                         ]
-          }
-      ],
-      include: [
-        {
+          },
+          {
             model: Tag,
-            attributes: ['id','tag_name'],
-            model: ProductTag,
-            attributes: ['id', 
-                         'product_id',
-                         'tag_id'
-                        ]
+            attributes: ['id',
+                         'tag_name'
+                        ],
+            include: {
+                model: ProductTag,
+                attributes: ['id', 
+                             'product_id',
+                             'tag_id'
+                            ]
+            }
+       
         }
       ]
   })
@@ -82,6 +85,7 @@ router.get('/:id', (req, res) => {
         if(!dbProductData){
             res.status(404).json({ message: 'No product found with this id '});
         }
+        res.json(dbProductData);
     })
     .catch(err => {
         console.log(err);
